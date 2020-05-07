@@ -1,27 +1,43 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi');
-const node_service = require('service/node_service.js');
+const MySQL = require('mysql');
+const server = new Hapi.Server();
+
+const connection = MySQL.createConnection({
+    host: 'localhost',
+    port: 8888,
+    user: 'root',
+    password: 'root',
+    database: 'vue'
+});
 
 const init = async () => {
 
-    const server = Hapi.server({
+    const server = new Hapi.Server({
         port: 3000,
         host: 'localhost'
     });
 
+    connection.connect();
+
     server.route({
         method: 'GET',
         path: '/',
-        handler: (request, h) => {
+        handler: (req, h) => {
 
             return 'Hello World!';
         }
     });
 
-    await server.start();
-    console.log('Server running on %s', server.info.uri);
-};
+    server.start((err) => {
+
+        if (err) {
+            throw err;
+        }
+        console.log('Server running at:', server.info.uri);
+    });
+}
 
 process.on('unhandledRejection', (err) => {
 
