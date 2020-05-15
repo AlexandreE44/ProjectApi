@@ -1,15 +1,16 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi');
+const postRoute = require('./routes/postRoutes.js');
 const MySQL = require('mysql');
 const server = new Hapi.Server();
 
 const connection = MySQL.createConnection({
     host: 'localhost',
-    port: 8888,
+    port: 3306,
     user: 'root',
-    password: 'root',
-    database: 'vue'
+    password: '',
+    database: 'apitest'
 });
 
 const init = async () => {
@@ -21,14 +22,9 @@ const init = async () => {
 
     connection.connect();
 
-    server.route({
-        method: 'GET',
-        path: '/',
-        handler: (req, h) => {
 
-            return 'Hello World!';
-        }
-    });
+
+    postRoute(server, connection)
 
     server.start((err) => {
 
